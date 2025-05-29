@@ -17,6 +17,9 @@ app.use(
 );
 
 app.use(express.json());
+app.get("/", (req, res) => {
+  res.json("deployed successfully");
+});
 
 app.use("/api/auth", authRouter);
 app.use("/api/properties", propertiesRouter);
