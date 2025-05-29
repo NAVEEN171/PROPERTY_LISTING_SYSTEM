@@ -513,7 +513,6 @@ const updateProperty = async (req, res) => {
 
     if (!id) {
       return res.status(400).json({
-        success: false,
         message: "Property ID is required",
       });
     }
@@ -522,7 +521,6 @@ const updateProperty = async (req, res) => {
 
     if (!property) {
       return res.status(404).json({
-        success: false,
         message: "Property not found",
       });
     }

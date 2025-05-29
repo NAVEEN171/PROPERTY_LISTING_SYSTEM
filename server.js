@@ -9,12 +9,7 @@ const favouritesRouter = require("./routes/favouriteRoutes");
 const recommendationsRouter = require("./routes/recommendationsRoutes");
 const { connectRedis } = require("./config/Redis");
 
-app.use(
-  cors({
-    origin: "*",
-    credentials: true,
-  })
-);
+app.use(cors());
 
 app.use(express.json());
 app.get("/", (req, res) => {
