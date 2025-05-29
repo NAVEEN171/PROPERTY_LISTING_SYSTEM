@@ -61,7 +61,6 @@ const recommendProperty = async (req, res) => {
 
     if (!email || !featureId) {
       return res.status(400).json({
-        success: false,
         message: "Email and featureId are required",
       });
     }
@@ -82,7 +81,6 @@ const recommendProperty = async (req, res) => {
 
     if (recommendingUser.email.toLowerCase() === email.toLowerCase()) {
       return res.status(400).json({
-        success: false,
         message: "You cannot recommend a property to yourself",
       });
     }
@@ -93,7 +91,6 @@ const recommendProperty = async (req, res) => {
 
     if (!recipientUser) {
       return res.status(404).json({
-        success: false,
         message: "User not found with this email",
       });
     }

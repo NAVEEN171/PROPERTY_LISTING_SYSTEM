@@ -60,7 +60,6 @@ const createFavourite = async (req, res) => {
   } catch (error) {
     console.error("Create favourite error:", error);
     res.status(500).json({
-      success: false,
       message: "Internal server error",
     });
   }
@@ -124,7 +123,6 @@ const getFavouriteById = async (req, res) => {
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({
-        success: false,
         message: "Invalid favourite ID",
       });
     }
@@ -256,7 +254,6 @@ const deleteFavourite = async (req, res) => {
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({
-        success: false,
         message: "Invalid favourite ID",
       });
     }
@@ -271,7 +268,6 @@ const deleteFavourite = async (req, res) => {
 
     if (result.deletedCount === 0) {
       return res.status(404).json({
-        success: false,
         message: "Favourite not found",
       });
     }

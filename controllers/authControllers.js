@@ -90,7 +90,6 @@ const login = async (req, res) => {
 
     if (!email || !password) {
       return res.status(400).json({
-        success: false,
         message: "Email and password are required",
       });
     }
@@ -107,7 +106,6 @@ const login = async (req, res) => {
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return res.status(401).json({
-        success: false,
         message: "Invalid credentials",
       });
     }
@@ -192,7 +190,6 @@ const refreshToken = async (req, res) => {
         };
 
         res.status(200).json({
-          success: true,
           message: "Token refreshed successfully",
           accessToken,
           user: userResponse,

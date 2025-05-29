@@ -220,10 +220,7 @@ const getFilteredProperties = async (req, res) => {
     if (sortBy) {
       switch (sortBy) {
         case "priceLowToHigh":
-          sortOptions.price = 1;
-          break;
-        case "priceHighToLow":
-          sortOptions.price = -1;
+          sortOptions.price = sortOrder === "asc" ? 1 : -1;
           break;
         case "rating":
           sortOptions.rating = sortOrder === "asc" ? 1 : -1;
@@ -340,7 +337,6 @@ const createProperty = async (req, res) => {
         req.body[field] === ""
       ) {
         return res.status(400).json({
-          success: false,
           message: `${field} is required`,
         });
       }
@@ -353,7 +349,6 @@ const createProperty = async (req, res) => {
 
     if (!validTypes.includes(type)) {
       return res.status(400).json({
-        success: false,
         message:
           "Invalid property type. Must be one of: Apartment, Villa, Bungalow, Plot, Studio",
       });
@@ -361,7 +356,6 @@ const createProperty = async (req, res) => {
 
     if (!validFurnished.includes(furnished)) {
       return res.status(400).json({
-        success: false,
         message:
           "Invalid furnished type. Must be one of: Furnished, Semi, Unfurnished",
       });
@@ -369,21 +363,18 @@ const createProperty = async (req, res) => {
 
     if (!validListedBy.includes(listedBy)) {
       return res.status(400).json({
-        success: false,
         message: "Invalid listedBy type. Must be one of: Owner, Agent, Builder",
       });
     }
 
     if (!validListingType.includes(listingType)) {
       return res.status(400).json({
-        success: false,
         message: "Invalid listingType. Must be one of: sale, rent",
       });
     }
 
     if (price <= 0 || areaSqFt <= 0 || bedrooms < 0 || bathrooms < 0) {
       return res.status(400).json({
-        success: false,
         message:
           "Price and areaSqFt must be positive, bedrooms and bathrooms cannot be negative",
       });
@@ -391,7 +382,6 @@ const createProperty = async (req, res) => {
 
     if (rating !== undefined && (rating < 0 || rating > 5)) {
       return res.status(400).json({
-        success: false,
         message: "Rating must be between 0 and 5",
       });
     }
@@ -401,7 +391,6 @@ const createProperty = async (req, res) => {
       availableDate = format(new Date(availableFrom), "yyyy-MM-dd");
     } catch (error) {
       return res.status(400).json({
-        success: false,
         message: "Invalid availableFrom date format",
       });
     }
@@ -409,7 +398,6 @@ const createProperty = async (req, res) => {
     const existingProperty = await propertiesCollection.findOne({ id });
     if (existingProperty) {
       return res.status(400).json({
-        success: false,
         message: "Property with this ID already exists",
       });
     }
@@ -498,7 +486,6 @@ const getProperty = async (req, res) => {
 
     if (!property) {
       return res.status(404).json({
-        success: false,
         message: "Property not found",
       });
     }
@@ -506,7 +493,6 @@ const getProperty = async (req, res) => {
     await setKey(cacheKey, property);
 
     res.status(200).json({
-      success: true,
       data: property,
     });
   } catch (error) {
@@ -556,7 +542,6 @@ const updateProperty = async (req, res) => {
       )
     ) {
       return res.status(400).json({
-        success: false,
         message: "Invalid property type",
       });
     }
@@ -584,7 +569,6 @@ const updateProperty = async (req, res) => {
       !["sale", "rent"].includes(updates.listingType)
     ) {
       return res.status(400).json({
-        success: false,
         message: "Invalid listingType",
       });
     }
@@ -618,7 +602,6 @@ const updateProperty = async (req, res) => {
         );
       } catch (error) {
         return res.status(400).json({
-          success: false,
           message: "Invalid availableFrom date",
         });
       }
