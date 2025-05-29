@@ -461,15 +461,15 @@ const createProperty = async (req, res) => {
 
 const getProperty = async (req, res) => {
   try {
-    const { id } = req.params;
+    const { propertyId } = req.params;
 
-    if (!id) {
+    if (!propertyId) {
       return res.status(400).json({
         message: "Property ID is required",
       });
     }
 
-    const cacheKey = getCacheKey.singleProperty(id);
+    const cacheKey = getCacheKey.singleProperty(propertyId);
 
     const cachedProperty = await getKey(cacheKey);
     if (cachedProperty) {
@@ -481,7 +481,7 @@ const getProperty = async (req, res) => {
     const db = await connectDB();
     const propertiesCollection = db.collection("Properties");
 
-    const property = await propertiesCollection.findOne({ id });
+    const property = await propertiesCollection.findOne({ id: propertyId });
 
     if (!property) {
       return res.status(404).json({
@@ -507,16 +507,16 @@ const updateProperty = async (req, res) => {
     const db = await connectDB();
     const propertiesCollection = db.collection("Properties");
 
-    const { id } = req.params;
+    const { propertyId } = req.params;
     const updates = req.body;
 
-    if (!id) {
+    if (!propertyId) {
       return res.status(400).json({
         message: "Property ID is required",
       });
     }
 
-    const property = await propertiesCollection.findOne({ id });
+    const property = await propertiesCollection.findOne({ id: propertyId });
 
     if (!property) {
       return res.status(404).json({
@@ -619,7 +619,7 @@ const updateProperty = async (req, res) => {
     updates.updatedAt = new Date();
 
     const result = await propertiesCollection.updateOne(
-      { id },
+      { id: propertyId },
       { $set: updates }
     );
 
@@ -629,9 +629,11 @@ const updateProperty = async (req, res) => {
       });
     }
 
-    const updatedProperty = await propertiesCollection.findOne({ id });
+    const updatedProperty = await propertiesCollection.findOne({
+      id: propertyId,
+    });
 
-    const singlePropertyKey = getCacheKey.singleProperty(id);
+    const singlePropertyKey = getCacheKey.singleProperty(propertyId);
     await deleteKey(singlePropertyKey);
     await deleteKeysByPattern(getCacheKey.allPropertiesPattern());
 
@@ -647,21 +649,20 @@ const updateProperty = async (req, res) => {
   }
 };
 
-// DELETE Property - Using Native MongoDB
 const deleteProperty = async (req, res) => {
   try {
     const db = await connectDB();
     const propertiesCollection = db.collection("Properties");
 
-    const { id } = req.params;
+    const { propertyId } = req.params;
 
-    if (!id) {
+    if (!propertyId) {
       return res.status(400).json({
         message: "Property ID is required",
       });
     }
 
-    const property = await propertiesCollection.findOne({ id });
+    const property = await propertiesCollection.findOne({ id: propertyId });
 
     if (!property) {
       return res.status(404).json({
@@ -676,7 +677,7 @@ const deleteProperty = async (req, res) => {
       });
     }
 
-    const result = await propertiesCollection.deleteOne({ id });
+    const result = await propertiesCollection.deleteOne({ id: propertyId });
 
     if (result.deletedCount === 0) {
       return res.status(404).json({
@@ -684,7 +685,7 @@ const deleteProperty = async (req, res) => {
       });
     }
 
-    const singlePropertyKey = getCacheKey.singleProperty(id);
+    const singlePropertyKey = getCacheKey.singleProperty(propertyId);
     await deleteKey(singlePropertyKey);
     await deleteKeysByPattern(getCacheKey.allPropertiesPattern());
 
