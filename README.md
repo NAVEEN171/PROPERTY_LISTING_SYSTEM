@@ -207,7 +207,7 @@ Authorization: Bearer <refresh_token>
 - `tags` - Required tags (comma-separated)
 - `amenities` - Required amenities (comma-separated)
 - `availableFrom` - Availability date
-- `Page` - Pagination (default: 1, 10 per page)
+- `Page` - Pagination ( 10 per page)
 - `sortBy` - Sort options (priceLowToHigh, rating, area)
 - `sortOrder` - asc or desc
 
@@ -403,7 +403,13 @@ Authorization: Bearer <refresh_token>
 **Authentication:** Required
 
 **Query Parameters:**
-- `searchEmail` (required) - Email pattern to search
+- `searchEmail` (required) - Email pattern to search for users
+
+**Features:**
+- Case-insensitive email search using regex pattern
+- Returns up to 15 matching users
+- Results cached for 10 minutes (600 seconds)
+- Only returns user name and email fields
 
 **Success Response (200):**
 ```json
@@ -413,10 +419,19 @@ Authorization: Bearer <refresh_token>
       "_id": "user_object_id_1",
       "name": "John Doe",
       "email": "john.doe@example.com"
+    },
+    {
+      "_id": "user_object_id_2", 
+      "name": "Jane Smith",
+      "email": "jane.smith@example.com"
     }
   ]
 }
 ```
+
+**Error Responses:**
+- `400` - Missing searchEmail parameter
+- `500` - Internal server error
 
 #### Recommend Property - `POST /api/recommendations/recommend-property`
 **Authentication:** Required
@@ -425,14 +440,20 @@ Authorization: Bearer <refresh_token>
 ```json
 {
   "email": "recipient@example.com",
-  "featureId": "property_custom_id"
+  "propertyId": "property_custom_id"
 }
 ```
 
-**Validation:**
-- Cannot recommend to yourself
-- Cannot send duplicate recommendations
-- Recipient must exist
+**Validation Rules:**
+- Both email and propertyId are required
+- Cannot recommend property to yourself
+- Cannot send duplicate recommendations to the same user for the same property
+- Recipient user must exist in the system
+
+**Features:**
+- Creates recommendation record with pending status
+- Invalidates recommendation cache for both sender and recipient
+- Stores both sender and recipient user IDs for tracking
 
 **Success Response (201):**
 ```json
@@ -445,8 +466,21 @@ Authorization: Bearer <refresh_token>
 }
 ```
 
+**Error Responses:**
+- `400` - Missing required fields or attempting to recommend to yourself
+- `404` - Recommending user or recipient user not found
+- `409` - Property already recommended to this user
+- `500` - Internal server error
+
 #### Get Recommendations - `GET /api/recommendations/`
 **Authentication:** Required
+
+**Features:**
+- Retrieves both sent and received recommendations for the authenticated user
+- Results cached for 15 minutes (900 seconds)
+- Includes user details for recommenders and recipients
+- Sorted by creation date (newest first)
+- Separates recommendations into sent and received categories
 
 **Success Response (200):**
 ```json
@@ -455,7 +489,7 @@ Authorization: Bearer <refresh_token>
   "received": [
     {
       "id": "recommendation_object_id_1",
-      "featureId": "property_custom_id_1",
+      "propertyId": "property_custom_id_1",
       "recommendedBy": {
         "_id": "recommender_user_id",
         "name": "Jane Smith",
@@ -469,7 +503,7 @@ Authorization: Bearer <refresh_token>
   "sent": [
     {
       "id": "recommendation_object_id_2",
-      "featureId": "property_custom_id_2",
+      "propertyId": "property_custom_id_2",
       "recommendedTo": {
         "_id": "recipient_user_id",
         "name": "John Doe",
@@ -484,6 +518,9 @@ Authorization: Bearer <refresh_token>
   "totalSent": 1
 }
 ```
+
+**Error Responses:**
+- `500` - Internal server error
 
 ## ⚙️ Configuration Files
 
@@ -559,15 +596,3 @@ Authorization: Bearer <refresh_token>
 
 5. **Verify installation**
    The server will run on `http://localhost:5000` (or your specified PORT)
-
-### Environment Variables
-
-| Variable | Description | Required |
-|----------|-------------|----------|
-| `PORT` | Server port number | No (default: 5000) |
-| `MONGODB_URL` | MongoDB connection string | Yes |
-| `ACCESS_TOKEN_SECRET` | JWT access token secret | Yes |
-| `REFRESH_TOKEN_SECRET` | JWT refresh token secret | Yes |
-| `REDIS_CONN_PASSWORD` | Redis server password | Yes |
-
-
