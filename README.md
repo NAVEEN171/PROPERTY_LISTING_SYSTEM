@@ -66,9 +66,9 @@ property-management-system/
 ### Property Routes (`/api/properties`)
 - `GET /Get-properties` - Advanced property search with filtering and pagination
 - `POST /add-property` - Create new property listing (Auth required)
-- `GET /get-property/:id` - Retrieve single property by ID
-- `PUT /update-property/:id` - Update property (Creator only)
-- `DELETE /delete-property/:id` - Delete property (Creator only)
+- `GET /get-property/:propertyId` - Retrieve single property by ID
+- `PUT /update-property/:propertyId` - Update property (Creator only)
+- `DELETE /delete-property/:propertyId` - Delete property (Creator only)
 
 ### Favorites Routes (`/api/favourites`)
 - `GET /` - Get user's favorite properties list
@@ -279,7 +279,7 @@ Authorization: Bearer <refresh_token>
 - `rating`: 0-5 range
 - `id`: Must be unique
 
-#### Get Single Property - `GET /api/properties/get-property/:id`
+#### Get Single Property - `GET /api/properties/get-property/:propertyId`
 **Authentication:** Not required (Public endpoint)
 
 **Success Response (200):**
@@ -294,7 +294,7 @@ Authorization: Bearer <refresh_token>
 }
 ```
 
-#### Update Property - `PUT /api/properties/update-property/:id`
+#### Update Property - `PUT /api/properties/update-property/:propertyId`
 **Authentication:** Required
 **Authorization:** Only property creator can update
 
@@ -310,7 +310,7 @@ Authorization: Bearer <refresh_token>
 }
 ```
 
-#### Delete Property - `DELETE /api/properties/delete-property/:id`
+#### Delete Property - `DELETE /api/properties/delete-property/:propertyId`
 **Authentication:** Required
 **Authorization:** Only property creator can delete
 
