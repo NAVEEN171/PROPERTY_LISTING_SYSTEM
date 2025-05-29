@@ -66,7 +66,7 @@ property-management-system/
 ### Property Routes (`/api/properties`)
 - `GET /Get-properties` - Advanced property search with filtering and pagination
 - `POST /add-property` - Create new property listing (Auth required)
-- `GET /get-property/:propertyId` - Retrieve single property by ID
+- `GET /get-property/:propertyId` - Retrieve single property by propertyId
 - `PUT /update-property/:propertyId` - Update property (Creator only)
 - `DELETE /delete-property/:propertyId` - Delete property (Creator only)
 
