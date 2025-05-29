@@ -474,7 +474,6 @@ const getProperty = async (req, res) => {
     const cachedProperty = await getKey(cacheKey);
     if (cachedProperty) {
       return res.status(200).json({
-        success: true,
         data: cachedProperty,
       });
     }
