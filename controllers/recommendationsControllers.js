@@ -56,12 +56,12 @@ const searchUsers = async (req, res) => {
 
 const recommendProperty = async (req, res) => {
   try {
-    const { email, featureId } = req.body;
+    const { email, propertyId } = req.body;
     const recommendingUserId = req.user.id;
 
-    if (!email || !featureId) {
+    if (!email || !propertyId) {
       return res.status(400).json({
-        message: "Email and featureId are required",
+        message: "Email and propertyId are required",
       });
     }
 
@@ -98,7 +98,7 @@ const recommendProperty = async (req, res) => {
     const existingRecommendation = await recommendationsCollection.findOne({
       userId: new ObjectId(String(recommendingUserId)),
       recommendedToUserId: new ObjectId(recipientUser._id),
-      featureId: featureId,
+      propertyId: propertyId,
     });
 
     if (existingRecommendation) {
@@ -110,7 +110,7 @@ const recommendProperty = async (req, res) => {
     const recommendation = {
       userId: new ObjectId(String(recommendingUserId)),
       recommendedToUserId: new ObjectId(String(recipientUser._id)),
-      featureId: featureId,
+      propertyId: propertyId,
       createdAt: new Date(),
       status: "pending",
     };
@@ -173,7 +173,7 @@ const getReceivedRecommendations = async (req, res) => {
 
         receivedRecommendations.push({
           id: rec._id,
-          featureId: rec.featureId,
+          propertyId: rec.propertyId,
           recommendedBy: recommender,
           createdAt: rec.createdAt,
           status: rec.status,
@@ -187,7 +187,7 @@ const getReceivedRecommendations = async (req, res) => {
 
         sentRecommendations.push({
           id: rec._id,
-          featureId: rec.featureId,
+          propertyId: rec.propertyId,
           recommendedTo: recipient,
           createdAt: rec.createdAt,
           status: rec.status,
