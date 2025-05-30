@@ -36,14 +36,13 @@ const createFavourite = async (req, res) => {
 
     const newFavourite = {
       userId: new ObjectId(String(userId)),
-      propertyId: propertyId, // String as requested
+      propertyId: propertyId,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
 
     const result = await favouritesCollection.insertOne(newFavourite);
 
-    // Clear cache after creating new favourite
     const userFavouritesKey = getCacheKey.userFavourites(userId);
     await deleteKey(userFavouritesKey);
 
@@ -81,7 +80,6 @@ const getFavourites = async (req, res) => {
 
     console.log(`Cache miss for user favourites: ${cacheKey}`);
 
-    // Get from database
     const db = await connectDB();
     const favouritesCollection = db.collection("Favourites");
 
@@ -115,11 +113,10 @@ const getFavourites = async (req, res) => {
   }
 };
 
-// READ - Get single favourite by ID (WITH CACHING)
 const getFavouriteById = async (req, res) => {
   try {
-    const { id } = req.params; // favourite _id
-    const userId = req.user.id; // From auth middleware
+    const { id } = req.params;
+    const userId = req.user.id;
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -137,7 +134,6 @@ const getFavouriteById = async (req, res) => {
       });
     }
 
-    // Get from database
     const db = await connectDB();
     const favouritesCollection = db.collection("Favourites");
 
@@ -160,7 +156,6 @@ const getFavouriteById = async (req, res) => {
       updatedAt: favourite.updatedAt,
     };
 
-    // Cache the result
     await setKey(cacheKey, favouriteData);
 
     res.status(200).json({
@@ -249,8 +244,8 @@ const updateFavourite = async (req, res) => {
 
 const deleteFavourite = async (req, res) => {
   try {
-    const { id } = req.params; // favourite _id
-    const userId = req.user.id; // From auth middleware
+    const { id } = req.params;
+    const userId = req.user.id;
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({
@@ -263,7 +258,7 @@ const deleteFavourite = async (req, res) => {
 
     const result = await favouritesCollection.deleteOne({
       _id: new ObjectId(String(id)),
-      userId: new ObjectId(String(userId)), // Ensure user can only delete their own favourites
+      userId: new ObjectId(String(userId)),
     });
 
     if (result.deletedCount === 0) {
