@@ -26,11 +26,53 @@ const getCacheKey = {
   singlePropertyPattern: (propertyId) => `property:${propertyId}*`,
 };
 
+//  Single Select Filters-
+
+//1) listingType - Rent, Sale, Lease (one choice only)
+// 2)bedRooms - Number of bedrooms (specific count)
+//3) bathRooms - Number of bathrooms (specific count)
+
+// 4)sortBy - Sort criteria (price, rating, area)
+// 5)sortOrder - Sort direction (asc or desc)
+
+//  Multi-Select Filters
+// User can select multiple options from a list
+
+// 1)propertyTypes - Bangalow, Villa,.. etc.
+// 2)furnishedTypes - Furnished, Semi, Unfurnished
+// 3)listedBy - Owner, Agent
+// 4)cities - Multiple city selection
+// 5)states - Multiple state selection
+// 4)colorThemes -multiple color.
+
+// 6)tags - Multiple property tags (split by "|")
+// 7)amenities - Multiple amenities (split by "|")
+
+//  Range Filters
+
+//1) Price Range - priceFrom → priceTo (₹10,000 to ₹50,000)
+//2) Area Range - areaSqFtFrom → areaSqFtTo (500 to 2000 sq ft)
+// 3)Rating Range - Minimum rating filter (3+ stars)
+
+//  Text Search Filter
+
+// title - Free text search in property titles (case-insensitive)
+
+//  Toggle/Boolean Filter
+
+// isVerified - Show only verified properties (true/false)
+
+//  Date Filter
+// User selects a date
+
+// availableFrom - Properties available from specific date
+
 const getFilteredProperties = async (req, res) => {
   try {
     const cacheKey = getCacheKey.filteredProperties(req.query);
 
     const cachedProperties = await getKey(cacheKey);
+
     if (cachedProperties) {
       return res.status(200).json(cachedProperties);
     }
@@ -219,7 +261,7 @@ const getFilteredProperties = async (req, res) => {
     const sortOptions = {};
     if (sortBy) {
       switch (sortBy) {
-        case "priceLowToHigh":
+        case "price":
           sortOptions.price = sortOrder === "asc" ? 1 : -1;
           break;
         case "rating":
@@ -237,7 +279,7 @@ const getFilteredProperties = async (req, res) => {
 
     aggregationPipeline.push({ $sort: sortOptions });
 
-    if (Page) {
+    if (page) {
       aggregationPipeline.push({
         $facet: {
           totalCount: [{ $count: "count" }],

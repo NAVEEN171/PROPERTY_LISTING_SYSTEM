@@ -12,7 +12,7 @@ const router = express.Router();
 router.get("/Get-properties", authenticateToken, getFilteredProperties);
 router.post("/add-property", authenticateToken, createProperty);
 
-router.get("/get-property/:propertyId", getProperty);
+router.get("/get-property/:propertyId", authenticateToken, getProperty);
 
 router.put("/update-property/:propertyId", authenticateToken, updateProperty);
 
