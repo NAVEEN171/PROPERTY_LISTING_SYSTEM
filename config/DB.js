@@ -6,7 +6,7 @@ let isConnected = false;
 const connectDB = async () => {
   if (isConnected) {
     console.log("MongoDB already connected");
-    return mongoose.connection.db;
+    return mongoose.connection;
   }
 
   try {
@@ -18,10 +18,10 @@ const connectDB = async () => {
       minPoolSize: 2,
     });
     isConnected = true;
-
-    return conn.connection.db;
+    return conn.connection;
   } catch (err) {
     console.error("MongoDB connection error:", err.message);
+    throw err;
   }
 };
 

@@ -6,7 +6,6 @@ const {
   refreshToken,
   checkPosts,
 } = require("../controllers/authControllers");
-const authenticateToken = require("../middleware/auth");
 
 router.post("/signup", signup);
 
