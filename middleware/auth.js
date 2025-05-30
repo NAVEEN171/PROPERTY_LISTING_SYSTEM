@@ -22,7 +22,6 @@ function authenticateToken(req, res, next) {
         code: "TOKEN_INVALID",
       });
     }
-    console.log(user);
 
     req.user = user;
     next();
