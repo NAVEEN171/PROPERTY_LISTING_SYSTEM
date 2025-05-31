@@ -299,7 +299,7 @@ const getFilteredProperties = async (req, res) => {
     }
 
     const filteredProperties = await propertiesCollection
-      .aggregate(aggregationPipeline)
+      .aggregate(aggregationPipeline, { allowDiskUse: true })
       .toArray();
 
     let responseData;
