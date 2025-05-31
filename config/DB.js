@@ -16,8 +16,6 @@ const connectDB = async () => {
       socketTimeoutMS: 45000,
       maxPoolSize: 10,
       minPoolSize: 2,
-      keepAlive: true,
-      keepAliveInitialDelay: 300000,
     });
     isConnected = true;
     return conn.connection;
