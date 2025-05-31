@@ -8,6 +8,7 @@ const propertiesRouter = require("./routes/propertiesRoutes");
 const favouritesRouter = require("./routes/favouriteRoutes");
 const recommendationsRouter = require("./routes/recommendationsRoutes");
 const { connectRedis } = require("./config/Redis");
+const createPropertiesIndexes = require("./helpers/indexAddition");
 
 app.use(cors());
 
